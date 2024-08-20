@@ -1,6 +1,6 @@
 
 import { Injectable } from '@nestjs/common';
-import { Database } from 'arangojs';
+import { Database , aql} from 'arangojs';
 
 @Injectable()
 export class DatabaseService {
@@ -10,8 +10,8 @@ export class DatabaseService {
     // Initialize the ArangoDB database connection with the given URL, database name, and authentication credentials.
     this.db = new Database({
       url: 'http://localhost:8560', // URL of the ArangoDB server.
-      databaseName: '_system', // Name of the database to connect to.
-      auth: { username: 'root', password: 'Ie2jHVy3pz8WLg2J' }, // Authentication credentials for ArangoDB.
+      databaseName: 'nba_db', // Name of the database to connect to.
+      auth: { username: 'inam', password: 'inaminam' }, // Authentication credentials for ArangoDB.
     });
   }
 
@@ -19,12 +19,10 @@ export class DatabaseService {
    * Seeds the provided tables into the ArangoDB database.
    * @param tables - An array of tables, where each table is an array of rows.
    */
-  async seedTables(tables: any[]): Promise<void> {
+  async seedTables(tables: any[]): Promise<string> {
     // Iterate over each table in the provided tables array.
     for (const table of tables) {
-      // Create a unique collection name based on the index of the table in the array.
       const collectionName = `table_${tables.indexOf(table)}`;
-      // Get the collection object from the database.
       const collection = this.db.collection(collectionName);
 
       // Check if the collection exists. If it does not, create it.
@@ -34,11 +32,33 @@ export class DatabaseService {
 
       // Iterate over each row in the current table.
       for (const row of table) {
-        // Create a document object with the row data.
         const document = { data: row };
-        // Save the document into the collection.
-        await collection.save(document);
+
+        // Use an AQL query to check if a document with the same data already exists in the collection.
+        const cursor = await this.db.query(aql`
+          FOR doc IN ${collection}
+          FILTER doc.data == ${row}
+          RETURN doc
+        `);
+
+        const existingDocs = await cursor.all();
+
+        if (existingDocs.length > 0) {
+          const existingDoc = existingDocs[0];
+
+          // Check if the existing data is different from the new data.
+          if (JSON.stringify(existingDoc.data) !== JSON.stringify(row)) {
+            // Update the existing document with the new data.
+            await collection.update(existingDoc._key, { data: row });
+          }
+        } else {
+          // If no matching document is found, insert the new document.
+          await collection.save(document);
+        }
       }
     }
+
+    // Return a success message when the operation is complete.
+    return 'Seeding process completed successfully.';
   }
 }
