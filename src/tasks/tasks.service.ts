@@ -13,7 +13,7 @@ export class TasksService {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  @Cron('* * * * *')
+  /*@Cron('* * * * *')
   async handleCron() {
     try {
         
@@ -27,7 +27,7 @@ export class TasksService {
         // Call seedTables method to save the scraped tables into the database.
         await this.databaseService.seedTables(tables);
 
-        await this.notificationsService.sendEmail("Successfullllllll")
+        //await this.notificationsService.sendEmail("Successfullllllll")
         console.log("Successful");
     
         
@@ -37,5 +37,5 @@ export class TasksService {
           'Error scraping or seeding tables: ' + error.message,
         );
       }
-  }
+  }*/
 }

@@ -1,7 +1,5 @@
-/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
-import * as cheerio from 'cheerio';
+import * as puppeteer from 'puppeteer';
 
 @Injectable()
 export class ScrapeService {
@@ -11,41 +9,33 @@ export class ScrapeService {
    * @returns A promise that resolves to an array of tables, each table being an array of rows.
    */
   async scrapeTables(url: string): Promise<any[]> {
-    // Fetch the HTML content from the provided URL using Axios.
-    const { data } = await axios.get(url);
-    // Load the HTML content into Cheerio for parsing.
-    const $ = cheerio.load(data);
+    // Launch a new instance of Puppeteer browser.
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
 
-    // Initialize an array to store the extracted tables.
-    const tables = [];
+    // Navigate to the provided URL.
+    await page.goto(url, { waitUntil: 'networkidle2' });
 
-    // Iterate over each <table> element in the HTML.
-    $('table').each((i, table) => {
-      // Initialize an array to store rows of the current table.
-      const rows = [];
-
-      // Iterate over each <tr> (table row) element in the current table.
-      $(table)
-        .find('tr')
-        .each((j, row) => {
-          // Initialize an array to store cells of the current row.
-          const cells = [];
-
-          // Iterate over each <td> (table cell) and <th> (table header) element in the current row.
-          $(row)
-            .find('td, th')
-            .each((k, cell) => {
-              // Extract and trim the text content of the cell, and push it to the cells array.
-              cells.push($(cell).text().trim());
-            });
-          // Push the array of cells (current row) to the rows array.
+    // Extract the tables from the page.
+    const tables = await page.evaluate(() => {
+      const tables: any[] = [];
+      document.querySelectorAll('table').forEach((table: HTMLTableElement) => {
+        const rows: any[] = [];
+        table.querySelectorAll('tr').forEach((row: HTMLTableRowElement) => {
+          const cells: any[] = [];
+          row.querySelectorAll('td, th').forEach((cell: HTMLTableCellElement) => {
+            cells.push(cell.textContent?.trim() || '');
+          });
           rows.push(cells);
         });
-      // Push the array of rows (current table) to the tables array.
-      tables.push(rows);
+        tables.push(rows);
+      });
+      return tables;
     });
 
-    // Return the array of tables.
+    // Close the Puppeteer browser.
+    await browser.close();
+
     return tables;
   }
 }
