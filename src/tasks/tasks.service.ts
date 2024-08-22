@@ -13,7 +13,7 @@ export class TasksService {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  /*@Cron('* * * * *')
+  /*@Cron('0 0 * * *')
   async handleCron() {
     try {
         

@@ -7,10 +7,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('NBA Salary Cap')
-    .setDescription('')
+    .setTitle('NBA & NFL')
+    .setDescription('Scrape nba salary information, NBA players data and NFL players data')
     .setVersion('1.0')
-    .addTag('scrape-and-seed')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

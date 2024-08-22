@@ -4,7 +4,7 @@ import { ScrapeService } from './scrape/scrape.service';
 import { DatabaseService } from './database/database.service';
 import { NotificationsService } from './notifications/notifications.service';
 
-@Controller()
+@Controller('salary-cap-projections')
 export class AppController {
   constructor(
     private readonly scrapeService: ScrapeService, // Injects ScrapeService to handle web scraping.

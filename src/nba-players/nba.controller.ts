@@ -2,7 +2,7 @@ import { Controller, Post } from '@nestjs/common';
 import { NbaService } from './nba.service';
 import { NbaDbService } from './nba-db.service';
 
-@Controller('nba')
+@Controller('nba-players')
 export class NbaController {
   private readonly url: string = 'https://www.spotrac.com/nba/draft/contracts/_/year/2024'; // Replace with the actual URL
   private readonly collectionName: string = 'nba_players_data'; // Replace with the actual collection name

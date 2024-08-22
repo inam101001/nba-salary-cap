@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Database, aql } from 'arangojs';
 
 @Injectable()
-export class NbaDbService {
+export class NflDbService {
   private db: Database;
 
   constructor() {
