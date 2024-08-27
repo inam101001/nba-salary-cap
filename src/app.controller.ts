@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Post } from '@nestjs/common';
 import { ScrapeService } from './scrape/scrape.service';
 import { DatabaseService } from './database/database.service';
 import { NotificationsService } from './notifications/notifications.service';
@@ -16,7 +16,7 @@ export class AppController {
    * Endpoint to trigger the web scraping and database seeding process.
    * @returns A response indicating the result of the scraping and seeding process.
    */
-  @Get('scrape-and-seed')
+  @Post('scrape-and-seed')
   async scrapeAndSeed() {
     try {
       // URL of the webpage to scrape.
