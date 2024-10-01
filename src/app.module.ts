@@ -1,3 +1,6 @@
+import { QueryDbService } from './queries/query-db.service';
+import { QueryController } from './queries/query.controller';
+import { QueryService } from './queries/query.service';
 import { NflController } from './nfl-players/nfl.controller';
 import { NflDbService } from './nfl-players/nfl-db.service';
 import { NflService } from './nfl-players/nfl.service';
@@ -18,9 +21,12 @@ import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [ScheduleModule.forRoot()],
   controllers: [
+        QueryController, 
         NflController, 
     NbaController, AppController],
   providers: [
+        QueryDbService, 
+        QueryService, 
         NflDbService, 
         NflService, 
         NbaDbService, 
